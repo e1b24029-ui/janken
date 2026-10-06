@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>じゃんけん</title>
+</head>
+
+<body>
+  <!-- 名前が渡されている時だけ表示する -->
+  <h2 th:if="${name != null}">Hi <span th:text="${name}"></span></h2>
+</body>
+
+</html>
