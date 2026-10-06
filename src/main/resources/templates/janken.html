@@ -7,8 +7,22 @@
 </head>
 
 <body>
-  <!-- 名前が渡されている時だけ表示する -->
   <h2 th:if="${name != null}">Hi <span th:text="${name}"></span></h2>
+
+  <!-- 手の選択リンク -->
+  <p>じゃんけんの手を選んでください：</p>
+  <ul>
+    <li><a th:href="@{/janken/play(hand='グー')}">グー</a></li>
+    <li><a th:href="@{/janken/play(hand='チョキ')}">チョキ</a></li>
+    <li><a th:href="@{/janken/play(hand='パー')}">パー</a></li>
+  </ul>
+
+  <!-- 対戦結果の表示領域 -->
+  <div th:if="${myHand != null}">
+    <p>あなたの手: <span th:text="${myHand}"></span></p>
+    <p>相手の手: <span th:text="${cpuHand}"></span></p>
+    <p>結果: <span th:text="${result}"></span></p>
+  </div>
 </body>
 
 </html>
