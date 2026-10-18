@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
   <meta charset="UTF-8">
@@ -8,11 +8,7 @@
 
 <body>
   <h1>じゃんけんアプリ</h1>
-  <form action="/janken" method="post">
-    <label for="name">ユーザ名：</label>
-    <input type="text" id="name" name="name" required>
-    <button type="submit">参加</button>
-  </form>
+  <a href="/janken">jankenへのGETをリクエスト</a>
 </body>
 
 </html>
