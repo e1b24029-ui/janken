@@ -1,41 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <meta charset="UTF-8">
-  <title>じゃんけんアプリ</title>
+  <title>Janken</title>
 </head>
 
 <body>
   <h1>じゃんけん</h1>
-
-  <div>
-    <p>ログイン中: <span th:text="${loginUser}"></span></p>
-    <a th:href="@{/logout}">ログアウト</a>
-  </div>
-
-  <hr>
-
-  <h2>エントリー</h2>
-  <ul>
-    <li th:each="user : ${entries}" th:text="${user}"></li>
-  </ul>
-
-  <hr>
-
-  <p>じゃんけんの手を選んでください：</p>
-  <ul>
-    <li><a th:href="@{/janken/play(hand='グー')}">グー</a></li>
-    <li><a th:href="@{/janken/play(hand='チョキ')}">チョキ</a></li>
-    <li><a th:href="@{/janken/play(hand='パー')}">パー</a></li>
-  </ul>
-
-  <div th:if="${result}">
-    <p>あなたの手: <span th:text="${myHand}"></span></p>
-    <p>相手の手: <span th:text="${cpuHand}"></span></p>
-    <p>結果: <span th:text="${result}"></span></p>
-  </div>
-
+  <p>ログインユーザ: <span sec:authentication="name">ユーザ名</span></p>
 </body>
 
 </html>
