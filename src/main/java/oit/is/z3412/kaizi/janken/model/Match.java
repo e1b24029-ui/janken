@@ -6,8 +6,7 @@ public class Match {
   private int user2;
   private String user1Hand;
   private String user2Hand;
-  private int winner;
-  private boolean isActive;
+  private String winner;
 
   public int getId() {
     return id;
@@ -49,19 +48,11 @@ public class Match {
     this.user2Hand = user2Hand;
   }
 
-  public int getWinner() {
+  public String getWinner() {
     return winner;
   }
 
-  public void setWinner(int winner) {
+  public void setWinner(String winner) {
     this.winner = winner;
-  }
-
-  public boolean getIsActive() {
-    return isActive;
-  }
-
-  public void setIsActive(boolean isActive) {
-    this.isActive = isActive;
   }
 }

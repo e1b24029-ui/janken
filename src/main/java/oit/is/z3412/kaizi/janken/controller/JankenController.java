@@ -2,45 +2,57 @@ package oit.is.z3412.kaizi.janken.controller;
 
 import java.security.Principal;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import oit.is.z3412.kaizi.janken.model.Entry;
+import oit.is.z3412.kaizi.janken.model.Janken;
 import oit.is.z3412.kaizi.janken.model.Match;
-import oit.is.z3412.kaizi.janken.model.MatchMapper;
 import oit.is.z3412.kaizi.janken.model.MatchInfo;
 import oit.is.z3412.kaizi.janken.model.MatchInfoMapper;
+import oit.is.z3412.kaizi.janken.model.MatchMapper;
 import oit.is.z3412.kaizi.janken.model.User;
 import oit.is.z3412.kaizi.janken.model.UserMapper;
+import oit.is.z3412.kaizi.janken.service.AsyncKekka;
 
 @Controller
 public class JankenController {
 
   @Autowired
+  private Entry entry;
+
+  @Autowired
   private UserMapper userMapper;
+
+  @Autowired
+  private MatchMapper matchMapper;
 
   @Autowired
   private MatchInfoMapper matchInfoMapper;
 
   @Autowired
-  private MatchMapper matchMapper;
+  private AsyncKekka asyncKekka;
 
   @GetMapping("/janken")
   public String janken(Principal prin, ModelMap model) {
     String loginUser = prin.getName();
+    this.entry.addUser(loginUser);
     model.addAttribute("loginUser", loginUser);
 
     List<User> users = userMapper.selectAllUsers();
     model.addAttribute("users", users);
 
-    List<MatchInfo> activeMatches = matchInfoMapper.selectActiveMatchInfos();
-    model.addAttribute("activeMatches", activeMatches);
-
     List<Match> matches = matchMapper.selectAllMatches();
     model.addAttribute("matches", matches);
+
+    List<MatchInfo> activeMatches = matchInfoMapper.selectActiveMatchInfos();
+    model.addAttribute("activeMatches", activeMatches);
 
     return "janken.html";
   }
@@ -48,77 +60,76 @@ public class JankenController {
   @GetMapping("/match")
   public String match(@RequestParam("id") int id, Principal prin, ModelMap model) {
     String loginUser = prin.getName();
-    model.addAttribute("loginUser", loginUser);
-
-    // 渡された id は対戦相手（または先手）のユーザーID
     User opponent = userMapper.selectById(id);
+    model.addAttribute("loginUser", loginUser);
     model.addAttribute("opponent", opponent);
 
     return "match.html";
   }
 
-  @GetMapping("/fight")
-  @Transactional
-  public String fight(@RequestParam("id") int opponentId, @RequestParam("hand") String hand, Principal prin,
-      ModelMap model) {
+  @PostMapping("/fight")
+  public String fight(@RequestParam("id") int id, @RequestParam("hand") String hand, Principal prin, ModelMap model) {
     String loginUser = prin.getName();
-    model.addAttribute("loginUser", loginUser);
-
     User loginObj = userMapper.selectByName(loginUser);
+
     if (loginObj == null) {
       return "janken.html";
     }
 
-    // 自分宛て（user2 = 自分のID）かつ isActive = TRUE の待ちデータがあるか探す
-    MatchInfo activeMatch = matchInfoMapper.selectByActiveUser2(loginObj.getId());
+    // ★修正ポイント1: 画面から渡された id（先攻のID）と、現在のログインユーザー（後手ID）の両方から
+    // 確実にアクティブな対戦情報を1件特定する
+    MatchInfo activeMatch = matchInfoMapper.selectByUsers(id, loginObj.getId());
 
+    // もし見つからない場合の予備検索
     if (activeMatch == null) {
-      // 待ちデータがない場合 ＝ 先手としての新規待機登録
+      activeMatch = matchInfoMapper.selectByActiveUser2(loginObj.getId());
+    }
+
+    if (activeMatch != null) {
+      // --- 【後手としての処理：試合成立】 ---
+      String user1Hand = activeMatch.getUser1Hand();
+      User user1Obj = userMapper.selectById(activeMatch.getUser1());
+
+      // 勝敗判定
+      String winner = Janken.judgeMatch(user1Hand, hand, user1Obj.getName(), loginObj.getName());
+
+      // 試合結果を matches テーブルに保存
+      Match match = new Match();
+      match.setUser1(activeMatch.getUser1());
+      match.setUser2(loginObj.getId());
+      match.setUser1Hand(user1Hand);
+      match.setUser2Hand(hand);
+      match.setWinner(winner);
+      matchMapper.insertMatch(match);
+
+      // ★修正ポイント2: コントローラー側で勝手に isActive = false にせず、
+      // データベースに残したままにしておく（AsyncKekka側に安全に検知させるため）
+      // activeMatch.setIsActive(false);
+      // matchInfoMapper.updateIsActive(activeMatch);
+
+      model.addAttribute("loginUser", loginUser);
+      model.addAttribute("match", match);
+      model.addAttribute("opponent", user1Obj);
+      List<Match> matches = matchMapper.selectAllMatches();
+      model.addAttribute("matches", matches);
+
+      return "match.html";
+    } else {
+      // --- 【先攻としての処理：新規登録して待機画面へ】 ---
       MatchInfo matchInfo = new MatchInfo();
       matchInfo.setUser1(loginObj.getId());
-      matchInfo.setUser2(opponentId);
+      matchInfo.setUser2(id);
       matchInfo.setUser1Hand(hand);
       matchInfo.setIsActive(true);
       matchInfoMapper.insertMatchInfo(matchInfo);
 
+      model.addAttribute("loginUser", loginUser);
       return "wait.html";
     }
+  }
 
-    // 待ちデータがある場合 ＝ 後手として参加し、試合成立！
-    activeMatch.setIsActive(false);
-    matchInfoMapper.updateIsActive(activeMatch);
-
-    String user1Hand = activeMatch.getUser1Hand();
-    String user2Hand = hand;
-
-    int winner = 0; // 0は引き分け
-    if (!user1Hand.equals(user2Hand)) {
-      if ((user1Hand.equals("Gu") && user2Hand.equals("Choki")) ||
-          (user1Hand.equals("Choki") && user2Hand.equals("Pa")) ||
-          (user1Hand.equals("Pa") && user2Hand.equals("Gu"))) {
-        winner = activeMatch.getUser1();
-      } else {
-        winner = loginObj.getId();
-      }
-    }
-
-    Match match = new Match();
-    match.setUser1(activeMatch.getUser1());
-    match.setUser2(loginObj.getId());
-    match.setUser1Hand(user1Hand);
-    match.setUser2Hand(user2Hand);
-    match.setWinner(winner);
-    match.setIsActive(true);
-    matchMapper.insertMatch(match);
-
-    List<Match> matches = matchMapper.selectAllMatches();
-    model.addAttribute("matches", matches);
-
-    User opponent = userMapper.selectById(activeMatch.getUser1());
-    if (opponent != null) {
-      model.addAttribute("opponent", opponent);
-    }
-
-    return "match.html";
+  @GetMapping("/sample4/step3")
+  public SseEmitter sample4Test(Principal prin) {
+    return asyncKekka.syncKekka(prin.getName());
   }
 }

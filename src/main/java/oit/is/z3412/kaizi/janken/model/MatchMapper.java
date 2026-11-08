@@ -12,7 +12,9 @@ public interface MatchMapper {
   @Select("SELECT * FROM matches")
   List<Match> selectAllMatches();
 
-  @Insert("INSERT INTO matches (user1, user2, user1Hand, user2Hand, winner, isActive) VALUES (#{user1}, #{user2}, #{user1Hand}, #{user2Hand}, #{winner}, TRUE);")
+  // カラム5つに対してプレースホルダーも確実に5つ（#{user1}, #{user2}, #{user1Hand}, #{user2Hand},
+  // #{winner}）指定する
+  @Insert("INSERT INTO matches (user1, user2, user1Hand, user2Hand, winner) VALUES (#{user1}, #{user2}, #{user1Hand}, #{user2Hand}, #{winner});")
   @Options(useGeneratedKeys = true, keyProperty = "id")
   void insertMatch(Match match);
 }
