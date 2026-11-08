@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface MatchInfoMapper {
@@ -12,7 +13,13 @@ public interface MatchInfoMapper {
   @Select("SELECT * FROM matchinfo WHERE isActive = TRUE")
   List<MatchInfo> selectActiveMatchInfos();
 
-  @Insert("INSERT INTO matchinfo (user1, user2, user1Hand, isActive) VALUES (#{user1}, #{user2}, #{user1Hand}, #{isActive})")
+  @Select("SELECT * FROM matchinfo WHERE user2 = #{user2} AND isActive = TRUE")
+  MatchInfo selectByActiveUser2(int user2);
+
+  @Insert("INSERT INTO matchinfo (user1, user2, user1Hand, isActive) VALUES (#{user1}, #{user2}, #{user1Hand}, TRUE);")
   @Options(useGeneratedKeys = true, keyProperty = "id")
   void insertMatchInfo(MatchInfo matchInfo);
+
+  @Update("UPDATE matchinfo SET isActive = #{isActive} WHERE id = #{id}")
+  void updateIsActive(MatchInfo matchInfo);
 }
