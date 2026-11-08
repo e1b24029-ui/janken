@@ -1,8 +1,44 @@
-<h2>アクティブな試合</h2>
-<ul>
-  <li th:each="match : ${activeMatches}">
-    Match ID:[[${match.id}]] User1:[[${match.user1}]] User2:[[${match.user2}]] User1Hand:[[${match.user1Hand}]]
-    isActive:[[${match.isActive}]]
-    <a th:href="@{/match(id=${match.user1})}">対戦する</a>
-  </li>
-</ul>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Janken</title>
+</head>
+
+<body>
+  <h1>Janken</h1>
+
+  <p>Hi [[${loginUser}]]</p>
+
+  <!-- 1. 対戦相手を選ぶ画面（ユーザー一覧） -->
+  <h2>対戦相手を選択してください</h2>
+  <ul>
+    <li th:each="user : ${users}" th:if="${user.name != loginUser}">
+      [[${user.name}]]
+      <a th:href="@{/match(id=${user.id})}">対戦する</a>
+    </li>
+  </ul>
+
+  <!-- 2. アクティブな試合の一覧 -->
+  <h2>アクティブな試合</h2>
+  <ul>
+    <li th:each="match : ${activeMatches}">
+      Match ID:[[${match.id}]] User1:[[${match.user1}]] User2:[[${match.user2}]] User1Hand:[[${match.user1Hand}]]
+      isActive:[[${match.isActive}]]
+      <a th:href="@{/match(id=${match.user1})}">対戦する</a>
+    </li>
+  </ul>
+
+  <!-- 3. 試合結果一覧 -->
+  <h2>試合結果一覧</h2>
+  <ul>
+    <li th:each="m : ${matches}">
+      id:[[${m.id}]] user1:[[${m.user1}]] user2:[[${m.user2}]] user1Hand:[[${m.user1Hand}]] user2Hand:[[${m.user2Hand}]]
+      winner:[[${m.winner}]]
+    </li>
+  </ul>
+
+</body>
+
+</html>

@@ -1,22 +1,21 @@
-CREATE TABLE users (
-  id IDENTITY,
-  name VARCHAR(50) NOT NULL
+CREATE TABLE IF NOT EXISTS users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255)
 );
 
-CREATE TABLE matches (
-  id IDENTITY,
+CREATE TABLE IF NOT EXISTS matchinfo (
+  id INT PRIMARY KEY AUTO_INCREMENT,
   user1 INT,
   user2 INT,
-  user1Hand VARCHAR(10),
-  user2Hand VARCHAR(10),
-  winner INT,
+  user1Hand VARCHAR(255),
   isActive BOOLEAN
 );
 
-CREATE TABLE matchinfo (
-  id IDENTITY,
+CREATE TABLE IF NOT EXISTS matches (
+  id INT PRIMARY KEY AUTO_INCREMENT,
   user1 INT,
   user2 INT,
-  user1Hand VARCHAR(10),
-  isActive BOOLEAN
+  user1Hand VARCHAR(255),
+  user2Hand VARCHAR(255),
+  winner VARCHAR(255)
 );

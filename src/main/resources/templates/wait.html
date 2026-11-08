@@ -3,16 +3,31 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Wait</title>
+  <title>Janken Wait</title>
+  <script>
+    window.onload = function () {
+      var sse = new EventSource('/sample4/step3');
+      sse.onmessage = function (event) {
+        var match = JSON.parse(event.data);
+        var resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "<h2>対戦結果</h2>" +
+          "<p>Match ID: " + match.id + "</p>" +
+          "<p>User1: " + match.user1 + " (手: " + match.user1Hand + ")</p>" +
+          "<p>User2: " + match.user2 + " (手: " + match.user2Hand + ")</p>" +
+          "<p>勝者: " + match.winner + "</p>" +
+          '<p><a href="/janken">戻る</a></p>';
+      };
+    }
+  </script>
 </head>
 
 <body>
-  <h1>Wait</h1>
-
+  <h1>相手の手を待っています...</h1>
   <p>Hi [[${loginUser}]]</p>
 
-  <p>相手の手を待ってます</p>
-
+  <div id="result">
+    <p>対戦相手からのアクションを待機中...</p>
+  </div>
 </body>
 
 </html>

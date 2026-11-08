@@ -11,18 +11,27 @@
 
   <p>Hi [[${loginUser}]]</p>
 
-  <p>対戦相手: [[${opponent.name}]]</p>
+  <!-- ① すでに勝負がついて結果（match）がある場合は、結果を表示する -->
+  <div th:if="${match != null}">
+    <h2>対戦結果</h2>
+    <p>あなたの手: [[${match.user2Hand}]]</p>
+    <p>相手の手: [[${match.user1Hand}]]</p>
+    <p>勝者: [[${match.winner}]]</p>
+    <p><a th:href="@{/janken}">もとに戻る</a></p>
+  </div>
 
-  <form th:action="@{/fight}" method="get">
-    <!-- 修正：コントローラー側で判別しやすいよう、渡された相手のIDをそのまま保持する -->
-    <input type="hidden" name="id" th:value="${opponent.id}" />
-    <p>出す手を選んでください：</p>
-    <button type="submit" name="hand" value="Gu">ぐー</button>
-    <button type="submit" name="hand" value="Choki">ちょき</button>
-    <button type="submit" name="hand" value="Pa">ぱー</button>
-  </form>
-
-  <p><a th:href="@{/janken}">もとに戻る</a></p>
+  <!-- ② まだ手を選んでいない（これから対戦する）場合は、手を選ぶフォームを表示する -->
+  <div th:unless="${match != null}">
+    <p>対戦相手: [[${opponent.name}]]</p>
+    <form th:action="@{/fight}" method="post">
+      <input type="hidden" name="id" th:value="${opponent.id}" />
+      <p>出す手を選んでください：</p>
+      <button type="submit" name="hand" value="Gu">ぐー</button>
+      <button type="submit" name="hand" value="Choki">ちょき</button>
+      <button type="submit" name="hand" value="Pa">ぱー</button>
+    </form>
+    <p><a th:href="@{/janken}">もとに戻る</a></p>
+  </div>
 
   <h2>試合結果一覧</h2>
   <ul>
