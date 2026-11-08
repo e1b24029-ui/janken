@@ -1,21 +1,21 @@
 CREATE TABLE users (
-    id IDENTITY PRIMARY KEY,
-    name VARCHAR NOT NULL
-);
-
-CREATE TABLE matchinfo (
-    id IDENTITY PRIMARY KEY,
-    user1 INT NOT NULL,
-    user2 INT NOT NULL,
-    user1Hand VARCHAR NOT NULL,
-    isActive BOOLEAN NOT NULL
+  id IDENTITY,
+  name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE matches (
-    id IDENTITY PRIMARY KEY,
-    user1 INT NOT NULL,
-    user2 INT NOT NULL,
-    user1Hand VARCHAR NOT NULL,
-    user2Hand VARCHAR NOT NULL,
-    isActive BOOLEAN NOT NULL
+  id IDENTITY,
+  user1 INT,
+  user2 INT,
+  user1Hand VARCHAR(10),
+  user2Hand VARCHAR(10),
+  winner INT
+);
+
+CREATE TABLE matchinfo (
+  id IDENTITY,
+  user1 INT,
+  user2 INT,
+  user1Hand VARCHAR(10),
+  isActive BOOLEAN
 );

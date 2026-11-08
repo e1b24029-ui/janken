@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,25 @@
 </head>
 
 <body>
-  <h1>じゃんけん</h1>
-  <p>ログインユーザ: <span sec:authentication="name">ユーザ名</span></p>
+  <h1>Janken</h1>
+
+  <p>Hi [[${loginUser}]]</p>
+
+  <h2>エントリー</h2>
+  <ul>
+    <li th:each="user : ${users}" th:if="${user.name != loginUser}">
+      <a th:href="@{/match(id=${user.id})}">[[${user.name}]]</a>
+    </li>
+  </ul>
+
+  <h2>アクティブな試合</h2>
+  <ul>
+    <li th:each="match : ${activeMatches}">
+      Match ID:[[${match.id}]] User1:[[${match.user1}]] User2:[[${match.user2}]] User1Hand:[[${match.user1Hand}]]
+      isActive:[[${match.isActive}]]
+    </li>
+  </ul>
+
 </body>
 
 </html>

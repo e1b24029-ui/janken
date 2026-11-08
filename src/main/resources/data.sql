@@ -1,6 +1,6 @@
 INSERT INTO users (name) VALUES ('CPU');
-INSERT INTO users (name) VALUES ('ÇŸÇÒÇæ');
-INSERT INTO users (name) VALUES ('Ç¢Ç™Ç´');
+INSERT INTO users (name) VALUES ('„Åª„Çì„Å†');
+INSERT INTO users (name) VALUES ('„ÅÑ„Åå„Åç');
 
 INSERT INTO matchinfo (user1, user2, user1Hand, isActive) VALUES (1, 2, 'Gu', FALSE);
 INSERT INTO matchinfo (user1, user2, user1Hand, isActive) VALUES (2, 3, 'Choki', FALSE);
