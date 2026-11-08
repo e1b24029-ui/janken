@@ -3,22 +3,34 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Match</title>
+  <title>Janken Match</title>
 </head>
 
 <body>
-  <h1>Match</h1>
+  <h1>Janken Match</h1>
 
   <p>Hi [[${loginUser}]]</p>
 
-  <p>VS [[${opponent.name}]]</p>
+  <p>対戦相手: [[${opponent.name}]]</p>
 
-  <p>
-    <a th:href="@{/fight(id=${opponent.id}, hand='Gu')}">ぐー</a>
-    <a th:href="@{/fight(id=${opponent.id}, hand='Choki')}">ちょき</a>
-    <a th:href="@{/fight(id=${opponent.id}, hand='Pa')}">ぱー</a>
-  </p>
+  <form th:action="@{/fight}" method="get">
+    <!-- 修正：コントローラー側で判別しやすいよう、渡された相手のIDをそのまま保持する -->
+    <input type="hidden" name="id" th:value="${opponent.id}" />
+    <p>出す手を選んでください：</p>
+    <button type="submit" name="hand" value="Gu">ぐー</button>
+    <button type="submit" name="hand" value="Choki">ちょき</button>
+    <button type="submit" name="hand" value="Pa">ぱー</button>
+  </form>
 
+  <p><a th:href="@{/janken}">もとに戻る</a></p>
+
+  <h2>試合結果一覧</h2>
+  <ul>
+    <li th:each="m : ${matches}">
+      id:[[${m.id}]] user1:[[${m.user1}]] user2:[[${m.user2}]] user1Hand:[[${m.user1Hand}]] user2Hand:[[${m.user2Hand}]]
+      winner:[[${m.winner}]]
+    </li>
+  </ul>
 </body>
 
 </html>

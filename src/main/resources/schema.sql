@@ -9,7 +9,8 @@ CREATE TABLE matches (
   user2 INT,
   user1Hand VARCHAR(10),
   user2Hand VARCHAR(10),
-  winner INT
+  winner INT,
+  isActive BOOLEAN
 );
 
 CREATE TABLE matchinfo (
