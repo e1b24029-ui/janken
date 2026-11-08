@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Match</title>
+</head>
+
+<body>
+  <h1>Match</h1>
+
+  <p>Hi [[${loginUser}]]</p>
+
+  <p>VS [[${opponent.name}]]</p>
+
+  <p>
+    <a th:href="@{/fight(id=${opponent.id}, hand='Gu')}">ぐー</a>
+    <a th:href="@{/fight(id=${opponent.id}, hand='Choki')}">ちょき</a>
+    <a th:href="@{/fight(id=${opponent.id}, hand='Pa')}">ぱー</a>
+  </p>
+
+</body>
+
+</html>

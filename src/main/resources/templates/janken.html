@@ -3,38 +3,28 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>じゃんけんアプリ</title>
+  <title>Janken</title>
 </head>
 
 <body>
-  <h1>じゃんけん</h1>
+  <h1>Janken</h1>
 
-  <div>
-    <p>ログイン中: <span th:text="${loginUser}"></span></p>
-    <a th:href="@{/logout}">ログアウト</a>
-  </div>
-
-  <hr>
+  <p>Hi [[${loginUser}]]</p>
 
   <h2>エントリー</h2>
   <ul>
-    <li th:each="user : ${entries}" th:text="${user}"></li>
+    <li th:each="user : ${users}" th:if="${user.name != loginUser}">
+      <a th:href="@{/match(id=${user.id})}">[[${user.name}]]</a>
+    </li>
   </ul>
 
-  <hr>
-
-  <p>じゃんけんの手を選んでください：</p>
+  <h2>アクティブな試合</h2>
   <ul>
-    <li><a th:href="@{/janken/play(hand='グー')}">グー</a></li>
-    <li><a th:href="@{/janken/play(hand='チョキ')}">チョキ</a></li>
-    <li><a th:href="@{/janken/play(hand='パー')}">パー</a></li>
+    <li th:each="match : ${activeMatches}">
+      Match ID:[[${match.id}]] User1:[[${match.user1}]] User2:[[${match.user2}]] User1Hand:[[${match.user1Hand}]]
+      isActive:[[${match.isActive}]]
+    </li>
   </ul>
-
-  <div th:if="${result}">
-    <p>あなたの手: <span th:text="${myHand}"></span></p>
-    <p>相手の手: <span th:text="${cpuHand}"></span></p>
-    <p>結果: <span th:text="${result}"></span></p>
-  </div>
 
 </body>
 

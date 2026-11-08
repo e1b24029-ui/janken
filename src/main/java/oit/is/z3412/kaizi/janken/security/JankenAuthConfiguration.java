@@ -23,17 +23,28 @@ public class JankenAuthConfiguration {
             .logoutUrl("/logout")
             .logoutSuccessUrl("/"))
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/janken/**").authenticated()
+            .requestMatchers("/janken/**", "/match/**", "/fight/**", "/wait/**").authenticated()
             .anyRequest().permitAll())
         .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/janken/**"));
+            .ignoringRequestMatchers("/h2-console/**"))
+        .headers(headers -> headers
+            .frameOptions(frame -> frame.sameOrigin()));
     return http.build();
   }
 
   @Bean
   public InMemoryUserDetailsManager userDetailsService(PasswordEncoder encoder) {
-    // 実行環境のエンコーダで確実に「isdev」をハッシュ化して登録
     String hashedPass = encoder.encode("isdev");
+
+    UserDetails honda = User.withUsername("ほんだ")
+        .password(hashedPass)
+        .roles("USER")
+        .build();
+
+    UserDetails igaki = User.withUsername("いがき")
+        .password(hashedPass)
+        .roles("USER")
+        .build();
 
     UserDetails user1 = User.withUsername("user1")
         .password(hashedPass)
@@ -45,7 +56,7 @@ public class JankenAuthConfiguration {
         .roles("USER")
         .build();
 
-    return new InMemoryUserDetailsManager(user1, user2);
+    return new InMemoryUserDetailsManager(honda, igaki, user1, user2);
   }
 
   @Bean
