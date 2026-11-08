@@ -7,15 +7,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Entry {
-  private final List<String> users = Collections.synchronizedList(new ArrayList<>());
+    private final List<String> users = Collections.synchronizedList(new ArrayList<>());
 
-  public void addUser(String username) {
-    if (!users.contains(username)) {
-      users.add(username);
+    public void addUser(String username) {
+        if (!users.contains(username)) {
+            users.add(username);
+        }
     }
-  }
 
-  public List<String> getUsers() {
-    return users;
-  }
+    public List<String> getUsers() {
+        return users;
+    }
 }

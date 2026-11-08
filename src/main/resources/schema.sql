@@ -1,21 +1,21 @@
 CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255)
+  id IDENTITY,
+  name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE matches (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id IDENTITY,
   user1 INT,
   user2 INT,
-  user1Hand VARCHAR(255),
-  user2Hand VARCHAR(255),
-  isActive BOOLEAN
+  user1Hand VARCHAR(10),
+  user2Hand VARCHAR(10),
+  winner INT
 );
 
 CREATE TABLE matchinfo (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id IDENTITY,
   user1 INT,
   user2 INT,
-  user1Hand VARCHAR(255),
+  user1Hand VARCHAR(10),
   isActive BOOLEAN
 );
